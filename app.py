@@ -6,24 +6,30 @@ import database
 from db_admin import prompt_add_person
 
 
-def retrieve_person(connection, person_id):
-    "fetches a person from the database and records their appearance"
-    database.record_appearance(connection, person_id)
-    return database.get_person_by_id(connection, person_id)
+def validate_person(args):
+    "checks whether a person is excluded from database operations and if not records their appearance"
+    if args[4] == 1:
+        return True
+    else:
+        return False
 
 def display_person(args):
     "displays a person's name and type in a readable format"
-    _, name, type, score = args
+    _, name, type, score, _ = args
     article = "an" if type[0] in ("aeiou") else "a"
     return f"{name}, {article} {type.lower()}"
 
 def get_candidates(connection):
     "gets two candidates for scoring against one another"
     pool = database.get_number_of_people(connection)[0]
-    a, b = sample(range(1, pool), 2)
-    person_a = retrieve_person(connection, a)
-    person_b = retrieve_person(connection, b)
-    return (person_a, person_b)
+    while True:
+        a, b = sample(range(1, pool), 2)
+        person_a = database.get_person_by_id(connection, a)
+        person_b = database.get_person_by_id(connection, b)
+        if validate_person(person_a) and validate_person(person_b):
+            database.record_appearance(connection, a)
+            database.record_appearance(connection, b)
+            return (person_a, person_b)
 
 def show_worst_person(connection):
     "displays the person in the database with the highest score"

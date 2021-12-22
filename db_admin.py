@@ -13,7 +13,8 @@ Please choose one of these options:
 1) Add a new person
 2) Add many new people
 3) Display all people from the db
-4) Exit
+4) Exclude a person
+5) Exit
 
 Your selection: """
 
@@ -22,7 +23,7 @@ def main():
     connection = database.connect()
     database.create_tables(connection)
 
-    while (user_input := input(MENU_PROMPT)) != "4":
+    while (user_input := input(MENU_PROMPT)) != "5":
         match user_input:
             case "1":
                 prompt_add_person(connection)
@@ -30,6 +31,8 @@ def main():
                 prompt_add_many_people(connection)
             case "3":
                 prompt_get_all_people(connection)
+            case "4":
+                prompt_exclude_person(connection)
             case _:
                 print("invalid choice, please try again")
                 pass
@@ -62,6 +65,11 @@ def prompt_get_all_people(connection):
     people = database.get_all_people(connection)
     for p in people:
         print(p)
+
+def prompt_exclude_person(connection):
+    "asks for a person_id then exlcudes that person from all future database operations"
+    person_id = input("Enter the id of the person to exclude: ")
+    database.exclude_person(connection, person_id)
 
 if __name__ == '__main__':
     main()

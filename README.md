@@ -20,3 +20,4 @@ Some ideas that might be useful, in no particular order:
 1. Add web framework
 1. Add ability to display images next to the candidates
 1. Stronger validation for user input?
+1. Ability to post to Twitter, run polls, collect voting data and incorporate that into the database

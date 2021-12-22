@@ -3,16 +3,17 @@
 import sqlite3
 
 
-CREATE_PEOPLE_TABLE = "CREATE TABLE IF NOT EXISTS people (person_id INTEGER PRIMARY KEY, name TEXT, type TEXT, rating INTEGER, appearances INTEGER)"
-INSERT_PERSON = "INSERT INTO people (name, type, rating, appearances) VALUES (?, ?, ?, ?)"
+CREATE_PEOPLE_TABLE = "CREATE TABLE IF NOT EXISTS people (person_id INTEGER PRIMARY KEY, name TEXT, type TEXT, rating INTEGER, appearances INTEGER, include INTEGER)"
+INSERT_PERSON = "INSERT INTO people (name, type, rating, appearances, include) VALUES (?, ?, ?, ?, ?)"
 COUNT_PEOPLE = "SELECT COUNT(*) FROM people"
 RECORD_APPEARANCE = "UPDATE people SET appearances = appearances + 1 WHERE person_id = ?"
 RATE_PERSON = "UPDATE people SET rating = rating + 1 WHERE person_id = ?"
-GET_ALL_PEOPLE = "SELECT person_id, name, type, CAST(rating AS FLOAT)/appearances AS score FROM people"
-GET_PERSON_BY_NAME = "SELECT person_id, name, type, CAST(rating AS FLOAT)/appearances AS score FROM people WHERE name = ?"
-GET_PERSON_BY_ID = "SELECT person_id, name, type, CAST(rating AS FLOAT)/appearances AS score FROM people WHERE person_id = ?"
-GET_WORST_PERSON = "SELECT person_id, name, type, CAST(rating AS FLOAT)/appearances AS score FROM people ORDER BY score DESC LIMIT 1"
-GET_WORST_TEN = "SELECT person_id, name, type, CAST(rating AS FLOAT)/appearances AS score FROM people ORDER BY score DESC LIMIT 10"
+EXCLUDE_PERSON = "UPDATE people SET include = 0 WHERE person_id = ?"
+GET_ALL_PEOPLE = "SELECT * FROM people"
+# GET_PERSON_BY_NAME = "SELECT person_id, name, type, CAST(rating AS FLOAT)/appearances AS score FROM people WHERE name = ? and INCLUDE = 1"
+GET_PERSON_BY_ID = "SELECT person_id, name, type, CAST(rating AS FLOAT)/appearances AS score, include FROM people WHERE person_id = ?"
+GET_WORST_PERSON = "SELECT person_id, name, type, CAST(rating AS FLOAT)/appearances AS score,include FROM people WHERE include = 1 ORDER BY score DESC LIMIT 1"
+GET_WORST_TEN = "SELECT person_id, name, type, CAST(rating AS FLOAT)/appearances AS score, include FROM people WHERE include = 1 ORDER BY score DESC LIMIT 10"
 
 def connect():
     "connects to the database"
@@ -27,7 +28,12 @@ def add_person(connection, args):
     "adds a person into the database"
     with connection:
         name, type = args
-        connection.execute(INSERT_PERSON, (name, type, 0, 0))
+        connection.execute(INSERT_PERSON, (name, type, 0, 0, 1))
+
+def exclude_person(connection, person_id):
+    "excludes a person in the database from all future operations"
+    with connection:
+        connection.execute(EXCLUDE_PERSON, person_id)
 
 def get_number_of_people(connection):
     "returns the number of people in the database"
