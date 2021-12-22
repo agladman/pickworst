@@ -1,9 +1,10 @@
+"""main file for users to interact with the app: add, score or view people"""
+
 from random import sample
 
 import database
 from db_admin import prompt_add_person
 
-"""main file for users to interact with the app: add, score or view people"""
 
 def retrieve_person(connection, person_id):
     "fetches a person from the database and records their appearance"

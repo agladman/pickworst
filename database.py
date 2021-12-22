@@ -1,7 +1,6 @@
-import sqlite3
-
-
 """sql queries and methods for interacting with the database"""
+
+import sqlite3
 
 
 CREATE_PEOPLE_TABLE = "CREATE TABLE IF NOT EXISTS people (person_id INTEGER PRIMARY KEY, name TEXT, type TEXT, rating INTEGER, appearances INTEGER)"

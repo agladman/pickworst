@@ -1,9 +1,10 @@
+"""methods for administering the database directly: adding people or viewing records"""
+
 import csv
 from pathlib import Path
 
 import database
 
-"""methods for administering the database directly: adding people or viewing records"""
 
 MENU_PROMPT = """--- Database Admin ---
 
